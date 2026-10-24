@@ -1,12 +1,13 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const fs = require('fs'); // Перенесли модуль проверки файлов на самый верх!
 const app = express();
-const PORT = process.env.PORT || 3000; // Render автоматически выдает свой порт
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// Защищенный поиск папки public (проверяет все возможные варианты в облаке)
+// Защищенный поиск папки public (проверяет все варианты расположения в облаке)
 const publicPath = fs.existsSync(path.join(__dirname, 'public')) 
     ? path.join(__dirname, 'public') 
     : __dirname;
@@ -17,7 +18,7 @@ app.use(express.static(publicPath));
 const dbPath = path.join(__dirname, 'vhl_database.db');
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) console.error(err.message);
-    else console.log('БД подключена:', dbPath);
+    else console.log('БД успешно подключена:', dbPath);
 });
 
 // Создание таблиц
@@ -79,8 +80,5 @@ app.post('/api/matches', (req, res) => {
     });
     res.json({ success: true });
 });
-
-// Подключаем модуль проверки файлов в самый верх кода скрытно
-var fs = require('fs');
 
 app.listen(PORT, () => console.log('Сервер запущен на порту ' + PORT));
