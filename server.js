@@ -34,13 +34,20 @@ db.serialize(() => {
     )`);
 });
 
-// Принудительный и самый надежный поиск главного файла index.html
+// Надежный маршрут для главной страницы без лишних модулей
 app.get('/', (req, res) => {
-    const targetFile = fs.existsSync(path.join(__dirname, 'public', 'index.html'))
-        ? path.join(__dirname, 'public', 'index.html')
-        : path.join(__dirname, 'index.html');
-    res.sendFile(targetFile);
+    res.sendFile(path.join(__dirname, 'public', 'index.html'), (err) => {
+        if (err) {
+            // Если в папке public файла нет, сервер автоматически попробует отдать его из корня
+            res.sendFile(path.join(__dirname, 'index.html'), (err2) => {
+                if (err2) {
+                    res.send("<h1>Сервер VHL запущен!</h1><p>Но на GitHub не найден файл index.html. Убедитесь, что вы загрузили файл интерфейса.</p>");
+                }
+            });
+        }
+    });
 });
+
 
 // API Лиги VHL
 app.get('/api/teams', (req, res) => {
