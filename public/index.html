@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VHL | Официальный портал лиги</title>
     <script src="https://jsdelivr.net"></script>
+<script src="https://tailwindcss.com"></script>
+
     <link rel="stylesheet" href="https://cloudflare.com">
     <style>
         .tab-content, .view-section { display: none; } 
@@ -121,26 +123,6 @@
                         </select>
                         <div class="grid grid-cols-2 gap-4">
                             <input id="admin-score-home" type="number" placeholder="Голы Хозяев" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-center">
-Используйте код с осторожностью.
-Основное время (FT)
-Овертайм/Буллиты (OT)
-
-Записать результат
-
-Удаление клубов и игроков
-
-
-Команды лиги
-
-
-
-Список игроков
-
-
-
-
-
-
 const ADMIN_PASS = "vhladmin2026";
 document.addEventListener("DOMContentLoaded", () => { loadAllData(); setInterval(loadAllData, 15000); });
 async function loadAllData() {
