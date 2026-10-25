@@ -3,180 +3,267 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VHL | Virtual Puck Hockey League</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>VHL | Официальный портал лиги</title>
+    <script src="https://jsdelivr.net"></script>
+    <link rel="stylesheet" href="https://cloudflare.com">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .view-section, .tab-content { display: none; }
+        .tab-content, .view-section { display: none; } 
         .active { display: block; }
     </style>
 </head>
-<body class="bg-[#0b0f19] text-[#f3f4f6]">
-    <div class="bg-[#111827] border-b border-gray-800 text-right px-4 py-1 text-xs">
-        <button id="toggle-admin-view" onclick="promptAdmin()" class="text-gray-500 hover:text-blue-500 transition font-mono tracking-tight cursor-pointer">
-            <i class="fa-solid fa-shield-halved mr-1"></i> Войти в систему администрирования VHL
-        </button>
+<body class="bg-zinc-950 text-zinc-100 font-sans">
+
+    <!-- Верхний переключатель админки -->
+    <div class="bg-zinc-900 border-b border-zinc-800 text-right px-4 py-1 text-xs">
+        <button onclick="promptAdmin()" class="text-zinc-400 hover:text-blue-400 font-mono"><i class="fa-solid fa-lock mr-1"></i> Панель управления лигой</button>
     </div>
+
+    <!-- ПУБЛИЧНЫЙ ИНТЕРФЕЙС -->
     <div id="view-public" class="view-section active">
-        <header class="bg-[#111827]/90 border-b border-gray-850 sticky top-0 z-50 backdrop-blur">
+        <header class="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-50">
             <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <div class="bg-blue-600 text-white px-3 py-1 rounded font-black text-2xl tracking-tighter italic border border-blue-400">VHL</div>
-                    <div>
-                        <h1 class="text-base font-black tracking-wider uppercase text-white leading-none">VHL</h1>
-                        <p class="text-[10px] text-gray-400 tracking-tight mt-0.5">Virtual Puck Hockey League</p>
-                    </div>
+                    <div class="bg-blue-600 text-white px-3 py-1.5 rounded font-black text-2xl tracking-tighter italic border border-blue-400">VHL</div>
+                    <div><p class="text-sm font-bold uppercase tracking-wide">Virtual Hockey League</p></div>
                 </div>
-                <nav class="flex bg-[#0b0f19] p-1 rounded-lg border border-gray-800 text-xs sm:text-sm">
-                    <button onclick="switchTab('dashboard')" id="btn-dashboard" class="tab-btn px-3 py-1.5 rounded-md bg-blue-600 text-white font-semibold transition">Главная</button>
-                    <button onclick="switchTab('table')" id="btn-table" class="tab-btn px-3 py-1.5 rounded-md text-gray-400 font-medium transition">Турнирная таблица</button>
-                    <button onclick="switchTab('matches')" id="btn-matches" class="tab-btn px-3 py-1.5 rounded-md text-gray-400 font-medium transition">Календарь</button>
+                <nav class="flex bg-zinc-950 p-1 rounded-lg border border-zinc-800 text-xs">
+                    <button onclick="switchTab('table')" id="btn-table" class="tab-btn px-4 py-2 rounded-md bg-blue-600 text-white font-semibold">Таблицы</button>
+                    <button onclick="switchTab('matches')" id="btn-matches" class="tab-btn px-4 py-2 rounded-md text-zinc-400">Календарь игр</button>
+                    <button onclick="switchTab('stats')" id="btn-stats" class="tab-btn px-4 py-2 rounded-md text-zinc-400">Бомбардиры</button>
                 </nav>
             </div>
         </header>
+
         <main class="max-w-7xl mx-auto px-4 py-8">
-            <section id="tab-dashboard" class="tab-content active space-y-8">
-                <div class="bg-gradient-to-r from-blue-900/40 to-transparent border border-blue-800/40 p-6 rounded-2xl shadow-xl">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center md:text-left divide-y md:divide-y-0 md:divide-x divide-gray-800">
-                        <div class="pt-4 md:pt-0"><p class="text-3xl font-black text-white" id="stat-teams-count">0</p><p class="text-xs text-gray-400 uppercase tracking-widest mt-1">Команды</p></div>
-                        <div class="pt-4 md:pt-0 md:pl-6"><p class="text-3xl font-black text-white" id="stat-matches-count">0</p><p class="text-xs text-gray-400 uppercase tracking-widest mt-1">Матчей сыграно</p></div>
-                        <div class="pt-4 md:pt-0 md:pl-6"><p class="text-xl font-bold text-blue-400">Регулярный</p><p class="text-xs text-gray-400 uppercase tracking-widest mt-2">Текущий Сезон</p></div>
-                        <div class="pt-4 md:pt-0 md:pl-6"><p class="text-xs text-green-400 bg-green-950/50 border border-green-800 px-2.5 py-1 rounded-full font-mono inline-block">Онлайн: 25</p><p class="text-xs text-gray-400 uppercase tracking-widest mt-2">Статус Портала</p></div>
-                    </div>
+            <!-- ТАБЛИЦЫ КОНФЕРЕНЦИЙ -->
+            <section id="tab-table" class="tab-content active space-y-12">
+                <div>
+                    <h2 class="text-xl font-black uppercase text-blue-500 mb-4"><i class="fa-solid fa-star mr-2"></i>Конференция ЗАПАД</h2>
+                    <div class="bg-zinc-900 rounded-xl border border-zinc-800 overflow-x-auto"><table class="w-full text-left text-sm border-collapse"><thead><tr class="bg-zinc-800/50 text-zinc-400 text-xs border-b border-zinc-800 uppercase font-mono"><th class="p-3 text-center">№</th><th class="p-3">Клуб</th><th class="p-3 text-center">И</th><th class="p-3 text-center">В</th><th class="p-3 text-center">ВО</th><th class="p-3 text-center">ПО</th><th class="p-3 text-center">П</th><th class="p-3 text-center">Разн</th><th class="p-3 text-center text-blue-400 font-bold">Очки</th></tr></thead><tbody id="table-west" class="divide-y divide-zinc-800/40"></tbody></table></div>
                 </div>
                 <div>
-                    <h2 class="text-xl font-black uppercase tracking-tight mb-4 flex items-center gap-2 text-white"><span class="w-1 h-5 bg-blue-600 rounded"></span> Ближайшие и недавние игры</h2>
-                    <div id="public-dashboard-matches" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div>
+                    <h2 class="text-xl font-black uppercase text-red-500 mb-4"><i class="fa-solid fa-fire mr-2"></i>Конференция ВОСТОК</h2>
+                    <div class="bg-zinc-900 rounded-xl border border-zinc-800 overflow-x-auto"><table class="w-full text-left text-sm border-collapse"><thead><tr class="bg-zinc-800/50 text-zinc-400 text-xs border-b border-zinc-800 uppercase font-mono"><th class="p-3 text-center">№</th><th class="p-3">Клуб</th><th class="p-3 text-center">И</th><th class="p-3 text-center">В</th><th class="p-3 text-center">ВО</th><th class="p-3 text-center">ПО</th><th class="p-3 text-center">П</th><th class="p-3 text-center">Разн</th><th class="p-3 text-center text-red-400 font-bold">Очки</th></tr></thead><tbody id="table-east" class="divide-y divide-zinc-800/40"></tbody></table></div>
                 </div>
             </section>
-            <section id="tab-table" class="tab-content space-y-8">
-                <div>
-                    <h2 class="text-lg font-black uppercase tracking-tight mb-4 flex items-center gap-2 text-white"><i class="fa-solid fa-earth-americas text-blue-500"></i> Западная конференция</h2>
-                    <div class="overflow-x-auto bg-[#111827] rounded-xl border border-gray-800 shadow-2xl">
-                        <table class="w-full text-left border-collapse text-sm">
-                            <thead>
-                                <tr class="bg-gray-800/40 text-gray-400 text-xs uppercase tracking-wider border-b border-gray-800">
-                                    <th class="p-4 w-12 text-center">#</th><th class="p-4">Команда</th><th class="p-4 text-center">И</th>
-                                    <th class="p-4 text-center text-gray-400">В</th><th class="p-4 text-center text-gray-400">ВО</th>
-                                    <th class="p-4 text-center text-gray-400">ПО</th><th class="p-4 text-center text-gray-400">П</th>
-                                    <th class="p-4 text-center text-gray-400">ШЗ</th><th class="p-4 text-center text-gray-400">ШП</th>
-                                    <th class="p-4 text-center font-bold text-blue-400">О</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-west-body" class="divide-y divide-gray-800/60 font-medium"></tbody>
-                        </table>
-                    </div>
-                </div>
-                <div>
-                    <h2 class="text-lg font-black uppercase tracking-tight mb-4 flex items-center gap-2 text-white"><i class="fa-solid fa-earth-asia text-orange-500"></i> Восточная конференция</h2>
-                    <div class="overflow-x-auto bg-[#111827] rounded-xl border border-gray-800 shadow-2xl">
-                        <table class="w-full text-left border-collapse text-sm">
-                            <thead>
-                                <tr class="bg-gray-800/40 text-gray-400 text-xs uppercase tracking-wider border-b border-gray-800">
-                                    <th class="p-4 w-12 text-center">#</th><th class="p-4">Команда</th><th class="p-4 text-center">И</th>
-                                    <th class="p-4 text-center text-gray-400">В</th><th class="p-4 text-center text-gray-400">ВО</th>
-                                    <th class="p-4 text-center text-gray-400">ПО</th><th class="p-4 text-center text-gray-400">П</th>
-                                    <th class="p-4 text-center text-gray-400">ШЗ</th><th class="p-4 text-center text-gray-400">ШП</th>
-                                    <th class="p-4 text-center font-bold text-blue-400">О</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-east-body" class="divide-y divide-gray-800/60 font-medium"></tbody>
-                        </table>
-                    </div>
+
+            <!-- КАЛЕНДАРЬ МАТЧЕЙ -->
+            <section id="tab-matches" class="tab-content">
+                <h1 class="text-2xl font-black uppercase tracking-tight mb-6"><i class="fa-solid fa-calendar text-blue-500 mr-2"></i>Расписание туров</h1>
+                <div id="public-matches-container" class="space-y-8"></div>
+            </section>
+
+            <!-- БОМБАРДИРЫ -->
+            <section id="tab-stats" class="tab-content">
+                <h1 class="text-2xl font-black uppercase tracking-tight mb-6"><i class="fa-solid fa-hockey-puck text-blue-500 mr-2"></i>Статистика игроков (Г+П)</h1>
+                <div class="bg-zinc-900 rounded-xl border border-zinc-800 overflow-x-auto">
+                    <table class="w-full text-left text-sm border-collapse">
+                        <thead><tr class="bg-zinc-800/50 text-zinc-400 text-xs border-b border-zinc-800 uppercase"><th class="p-4 text-center">Поз</th><th class="p-4">Игрок</th><th class="p-4">Команда</th><th class="p-4 text-center">Голы</th><th class="p-4 text-center">Пасы</th><th class="p-4 text-center font-bold text-blue-400">Очки</th></tr></thead>
+                        <tbody id="public-players-list" class="divide-y divide-zinc-800/40"></tbody>
+                    </table>
                 </div>
             </section>
-            <section id="tab-matches" class="tab-content"><h1 class="text-xl font-black uppercase tracking-tight mb-6 text-white"><i class="fa-solid fa-calendar-days text-blue-500 mr-2"></i>Полный календарь</h1><div id="public-matches-grid" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"></div></section>
         </main>
     </div>
+
+    <!-- АДМИН ПАНЕЛЬ -->
     <div id="view-admin" class="view-section">
-        <header class="bg-red-950/20 border-b border-red-900/40 px-4 py-4"><div class="max-w-7xl mx-auto flex justify-between items-center"><h1 class="text-base font-black tracking-tight uppercase text-white">Администрирование VHL</h1><button onclick="exitAdmin()" class="bg-gray-900 border border-gray-700 px-3 py-1.5 rounded text-xs text-white">Выйти</button></div></header>
+        <header class="bg-red-950/40 border-b border-red-900/40 px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2"><span class="bg-red-600 text-white font-bold text-xs px-2 py-0.5 rounded">ADMIN</span><h1 class="text-lg font-black uppercase">Панель Руководства VHL</h1></div>
+            <button onclick="exitAdmin()" class="bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 px-3 py-1 text-xs rounded transition"><i class="fa-solid fa-door-open mr-1"></i> Выйти на сайт</button>
+        </header>
+
         <main class="max-w-7xl mx-auto px-4 py-8 grid gap-8 md:grid-cols-3">
             <div class="space-y-6">
-                <div class="bg-[#111827] p-5 rounded-xl border border-gray-800 shadow-xl">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4">Добавить команду</h3>
-                    <div class="space-y-3">
-                        <input id="team-name" type="text" placeholder="Название команды" class="w-full bg-[#0b0f19] border border-gray-800 px-3 py-2 rounded text-sm text-white focus:outline-none">
-                        <select id="team-conf" class="w-full bg-[#0b0f19] border border-gray-800 px-3 py-2 rounded text-sm text-white"><option value="Запад">Запад</option><option value="Восток">Восток</option></select>
-                        <button onclick="addTeam()" class="w-full bg-blue-600 text-white font-bold py-2 rounded text-xs uppercase">Добавить</button>
+                <!-- Создать клуб -->
+                <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 shadow-xl">
+                    <h3 class="text-xs font-bold uppercase text-zinc-400 mb-3">Регистрация Клуба</h3>
+                    <div class="space-y-2">
+                        <input id="team-name" type="text" placeholder="Название команды" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs">
+                        <input id="team-logo" type="text" placeholder="Ссылка на URL логотипа (картинку)" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs">
+                        <select id="team-conf" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-zinc-400">
+                            <option value="Запад">Конференция Запад</option>
+                            <option value="Восток">Конференция Восток</option>
+                        </select>
+                        <button onclick="addTeam()" class="w-full bg-blue-600 hover:bg-blue-500 font-bold p-2 rounded text-xs transition uppercase">Внести клуб</button>
                     </div>
                 </div>
-                <div class="bg-[#111827] p-5 rounded-xl border border-gray-800 shadow-xl">
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4">Внести матч</h3>
-                    <div class="space-y-3">
-                        <select id="match-home" class="w-full bg-[#0b0f19] border border-gray-800 px-3 py-2 rounded text-sm text-white"></select>
-                        <select id="match-away" class="w-full bg-[#0b0f19] border border-gray-800 px-3 py-2 rounded text-sm text-white"></select>
-                        <div class="grid grid-cols-2 gap-3">
-                            <input id="score-home" type="number" placeholder="Хозяева" class="w-full bg-[#0b0f19] border border-gray-800 px-3 py-2 rounded text-sm text-center text-white">
-                            <input id="score-away" type="number" placeholder="Гости" class="w-full bg-[#0b0f19] border border-gray-800 px-3 py-2 rounded text-sm text-center text-white">
+
+                <!-- Генератор calendars -->
+                <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 shadow-xl">
+                    <h3 class="text-xs font-bold uppercase text-zinc-400 mb-2">Генератор Календаря</h3>
+                    <p class="text-[11px] text-zinc-500 mb-3">Автоматически сотрет несыгранные матчи и создаст сетку туров «каждый с каждым».</p>
+                    <button onclick="generateSchedule()" class="w-full bg-amber-600 hover:bg-amber-500 font-bold p-2 rounded text-xs transition uppercase"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Сгенерировать сетку игр</button>
+                </div>
+
+                <!-- Добавить бомбардира -->
+                <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 shadow-xl">
+                    <h3 class="text-xs font-bold uppercase text-zinc-400 mb-3">Внести статистику игрока</h3>
+                    <div class="space-y-2">
+                        <input id="player-name" type="text" placeholder="Имя Фамилия" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs">
+                        <select id="player-team" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-zinc-300"></select>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input id="player-goals" type="number" placeholder="Голы" min="0" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-center">
+                            <input id="player-assists" type="number" placeholder="Пасы" min="0" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-center">
                         </div>
-                        <select id="match-status" class="w-full bg-[#0b0f19] border border-gray-800 px-3 py-2 rounded text-sm text-white"><option value="FT">Основное время (FT)</option><option value="OT">Овертайм (OT)</option></select>
-                        <button onclick="addMatch()" class="w-full bg-green-600 text-white font-bold py-2 rounded text-xs uppercase">Провести матч</button>
+                        <button onclick="addPlayer()" class="w-full bg-purple-600 hover:bg-purple-500 font-bold p-2 rounded text-xs transition uppercase">Добавить очки</button>
                     </div>
                 </div>
             </div>
-            <div class="md:col-span-2"><div class="bg-[#111827] p-5 rounded-xl border border-gray-800 shadow-xl"><h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-4">Редактор списков</h3><div class="overflow-x-auto"><table class="w-full text-left text-xs"><tbody id="admin-teams-list" class="divide-y divide-gray-800/40"></tbody></table></div></div></div>
-        </main>
-    </div>
-    <script>
-        const ADMIN_PASSWORD = "vhladmin2026";
-        document.addEventListener("DOMContentLoaded", () => { loadAllLeagueData(); setInterval(loadAllLeagueData, 8000); });
-        async function loadAllLeagueData() {
-            try {
-                const teamsRes = await fetch('/api/teams'); const teams = await teamsRes.json();
-                const matchesRes = await fetch('/api/matches'); const matches = await matchesRes.json();
-                renderTablesAndStats(teams); renderMatchesGrid(matches);
-            } catch (err) { console.error("Сбой обновления:", err); }
-        }
-        function renderTablesAndStats(teams) {
-            const westBody = document.getElementById("table-west-body"); const eastBody = document.getElementById("table-east-body");
-            const homeSel = document.getElementById("match-home"); const awaySel = document.getElementById("match-away");
-            const adminList = document.getElementById("admin-teams-list");
-            westBody.innerHTML = ""; eastBody.innerHTML = ""; homeSel.innerHTML = "<option value=''>-- Выберите команду --</option>"; awaySel.innerHTML = "<option value=''>-- Выберите команду --</option>"; adminList.innerHTML = "";
-            document.getElementById("stat-teams-count").innerText = teams.length;
-            let westIndex = 1; let eastIndex = 1;
-            teams.forEach(team => {
-                homeSel.innerHTML += `<option value="${team.name}">${team.name}</option>`; awaySel.innerHTML += `<option value="${team.name}">${team.name}</option>`;
-                adminList.innerHTML += `<tr class="hover:bg-gray-800/20"><td class="p-3 font-bold text-white">${team.name} (${team.conference})</td><td class="p-3 text-right"><button onclick="deleteTeamFromLeague(${team.id})" class="text-red-500 hover:text-red-400">Удалить</button></td></tr>`;
-                const totalGames = team.w + team.wo + team.lo + team.l;
-                const rowHtml = `<tr class="hover:bg-gray-800/30 border-b border-gray-850"><td class="p-4 text-center">${team.conference === 'Запад' ? westIndex : eastIndex}</td><td class="p-4 text-white font-bold">${team.name}</td><td class="p-4 text-center">${totalGames}</td><td class="p-4 text-center">${team.w}</td><td class="p-4 text-center">${team.wo}</td><td class="p-4 text-center">${team.lo}</td><td class="p-4 text-center">${team.l}</td><td class="p-4 text-center">${team.gs || 0}</td><td class="p-4 text-center">${team.ga || 0}</td><td class="p-4 text-center font-black text-blue-400">${team.pts}</td></tr>`;
-                if(team.conference === 'Запад') { westBody.innerHTML += rowHtml; westIndex++; } else { eastBody.innerHTML += rowHtml; eastIndex++; }
-            });
-        }
-        function renderMatchesGrid(matches) {
-            const grid = document.getElementById("public-matches-grid"); const dashGrid = document.getElementById("public-dashboard-matches");
-            grid.innerHTML = ""; dashGrid.innerHTML = ""; document.getElementById("stat-matches-count").innerText = matches.length;
-            matches.forEach((match, idx) => {
-                const cardHtml = `<div class="bg-[#111827] border border-gray-850 p-5 rounded-xl relative overflow-hidden"><div class="text-[11px] text-gray-500 mb-3 flex justify-between"><span>ID: #${match.id} • ${match.date}</span><span>${match.status}</span></div><div class="flex justify-between items-center"><div><p class="font-bold text-white">${match.home_team}</p><p class="font-bold text-gray-400">${match.away_team}</p></div><div class="bg-[#0b0f19] px-3 py-1 rounded font-mono text-white">${match.home_score} : ${match.away_score}</div></div></div>`;
-                grid.innerHTML += cardHtml; if(idx < 3) dashGrid.innerHTML += cardHtml;
-            });
-        }
-        async function addTeam() {
-            const name = document.getElementById("team-name").value.trim(); const conference = document.getElementById("team-conf").value;
-            if(!name) return alert("Введите название!");
-            await fetch('/api/teams', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ name, conference }) });
-            document.getElementById("team-name").value = ""; loadAllLeagueData();
-        }
-        async function addMatch() {
-            const home_team = document.getElementById("match-home").value; const away_team = document.getElementById("match-away").value;
-            const home_score = parseInt(document.getElementById("score-home").value); const away_score = parseInt(document.getElementById("score-away").value);
-            const status = document.getElementById("match-status").value;
-            if(!home_team || !away_team || isNaN(home_score) || isNaN(away_score)) return alert("Заполните данные!");
-            await fetch('/api/matches', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ home_team, away_team, home_score, away_score, status }) });
-            loadAllLeagueData();
-        }
-        async function deleteTeamFromLeague(id) { if(!confirm("Удалить?")) return; await fetch(`/api/teams/${id}`, { method: 'DELETE' }); loadAllLeagueData(); }
-        function promptAdmin() { const check = prompt("Пароль:"); if(check === ADMIN_PASSWORD) { document.getElementById("view-public").classList.remove("active"); document.getElementById("view-admin").classList.add("active"); } }
-        function exitAdmin() { document.getElementById("view-admin").classList.remove("active"); document.getElementById("view-public").classList.add("active"); }
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => { btn.classList.remove('bg-blue-600', 'text-white'); btn.classList.add('text-gray-400'); });
-            document.getElementById('tab-' + tabId).classList.add('active');
-            document.getElementById('btn-' + tabId).classList.remove('text-gray-400'); document.getElementById('btn-' + tabId).classList.add('bg-blue-600', 'text-white');
-        }
-    </script>
-</body>
-</html>
+
+            <!-- Правая сторона админки -->
+            <div class="md:col-span-2 space-y-6">
+                <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 shadow-xl">
+                    <h3 class="text-sm font-bold uppercase text-zinc-300 mb-3">Внести результаты сыгранных лобби</h3>
+                    <div class="space-y-3">
+                        <select id="admin-match-select" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-zinc-300">
+                            <option value="">Выберите матч для закрытия</option>
+                        </select>
+                        <div class="grid grid-cols-2 gap-4">
+                            <input id="admin-score-home" type="number" placeholder="Голы Хозяев" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-center">
+Используйте код с осторожностью.
+Основное время (FT)
+Овертайм/Буллиты (OT)
+
+Записать результат
+
+Удаление клубов и игроков
+
+
+Команды лиги
+
+
+
+Список игроков
+
+
+
+
+
+
+const ADMIN_PASS = "vhladmin2026";
+document.addEventListener("DOMContentLoaded", () => { loadAllData(); setInterval(loadAllData, 15000); });
+async function loadAllData() {
+try {
+const [tRes, mRes, pRes] = await Promise.all([fetch('/api/teams'), fetch('/api/matches'), fetch('/api/players')]);
+const teams = await tRes.json();
+const matches = await mRes.json();
+const players = await pRes.json();
+renderTables(teams);
+renderPublicMatches(matches);
+renderPlayers(players);
+renderAdminControls(teams, matches, players);
+} catch(e) { console.error("Ошибка синхронизации:", e); }
+}
+function renderTables(teams) {
+const westBody = document.getElementById("table-west");
+const eastBody = document.getElementById("table-east");
+westBody.innerHTML = ""; eastBody.innerHTML = "";
+let westIdx = 1, eastIdx = 1;
+teams.forEach(team => {
+const img = team.logo ? '' : '';
+const rowHtml = `
+${team.conference === 'Запад' ? westIdx++ : eastIdx++}
+\({img} <span>\){team.name}
+${team.w + team.wo + team.lo + team.l}
+${team.w}
+${team.wo}
+${team.lo}
+${team.l}
+\({team.gs}:\){team.ga}
+${team.pts}
+`;
+if(team.conference === 'Запад') westBody.innerHTML += rowHtml;
+else eastBody.innerHTML += rowHtml;
+});
+}
+function renderPublicMatches(matches) {
+const container = document.getElementById("public-matches-container");
+container.innerHTML = matches.length === 0 ? 'Расписание еще не сгенерировано в админке лиги.' : "";
+let currentTour = 0;
+let currentTourDiv = null;
+matches.forEach(match => {
+if (match.tour !== currentTour) {
+currentTour = match.tour;
+currentTourDiv = document.createElement("div");
+currentTourDiv.className = "space-y-3";
+currentTourDiv.innerHTML = 'Тур ' + currentTour + '';
+container.appendChild(currentTourDiv);
+}
+const grid = currentTourDiv.querySelector(".grid");
+const isPlayed = match.home_score !== null;
+grid.innerHTML += <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl flex justify-between items-center"> <div class="space-y-1 text-sm font-bold"> <p class="${isPlayed && match.home_score > match.away_score ? 'text-zinc-100' : 'text-zinc-400'}">${match.home_team}</p> <p class="${isPlayed && match.away_score > match.home_score ? 'text-zinc-100' : 'text-zinc-400'}">${match.away_team}</p> </div> <div class="flex flex-col bg-zinc-950 px-3 py-1.5 rounded border border-zinc-800 font-mono text-center font-black min-w-[50px]"> ${isPlayed ?${match.home_score}${match.away_score}:VS} </div> </div> ;
+});
+}
+function renderPlayers(players) {
+const tbody = document.getElementById("public-players-list");
+tbody.innerHTML = players.length === 0 ? 'Статистика пуста.' : "";
+players.forEach((player, index) => {
+tbody.innerHTML += `
+${index + 1}
+${player.name}
+${player.team}
+${player.goals}
+${player.assists}
+${player.pts}
+`;
+});
+}
+function renderAdminControls(teams, matches, players) {
+const pTeam = document.getElementById("player-team");
+const mSelect = document.getElementById("admin-match-select");
+const tList = document.getElementById("admin-teams-list");
+const pList = document.getElementById("admin-players-list");
+pTeam.innerHTML = ""; mSelect.innerHTML = "Выберите матч из списка";
+tList.innerHTML = ""; pList.innerHTML = "";
+teams.forEach(t => {
+pTeam.innerHTML += '' + t.name + '';
+tList.innerHTML += '' + t.name + '';
+});
+matches.forEach(m => {
+if(m.home_score === null) {
+mSelect.innerHTML += 'Тур ' + m.tour + ': ' + m.home_team + ' vs ' + m.away_team + '';
+}
+});
+players.forEach(p => {
+pList.innerHTML += '' + p.name + ' (' + p.goals + '+' + p.assists + ')';
+});
+}
+async function addTeam() {
+const name = document.getElementById("team-name").value.trim();
+const logo = document.getElementById("team-logo").value.trim();
+const conference = document.getElementById("team-conf").value;
+if(!name) return alert("Введите имя!");
+await fetch('/api/teams', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({name, logo, conference}) });
+document.getElementById("team-name").value = ""; document.getElementById("team-logo").value = ""; loadAllData();
+}
+async function generateSchedule() {
+if(!confirm("Уверены? Все несыгранные матчи будут заменены на новый календарь!")) return;
+await fetch('/api/matches/generate', { method: 'POST' });
+loadAllData(); alert("Календарь успешно перестроен!");
+}
+async function saveMatchScore() {
+const match_id = document.getElementById("admin-match-select").value;
+const home_score = parseInt(document.getElementById("admin-score-home").value);
+const away_score = parseInt(document.getElementById("admin-score-away").value);
+const status = document.getElementById("admin-match-status").value;
+if(!match_id || isNaN(home_score) || isNaN(away_score)) return alert("Заполните поля!");
+await fetch('/api/matches/score', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({match_id, home_score, away_score, status}) });
+document.getElementById("admin-score-home").value = ""; document.getElementById("admin-score-away").value = ""; loadAllData();
+}
+async function addPlayer() {
+const name = document.getElementById("player-name").value.trim();
+const team = document.getElementById("player-team").value;
+const goals = parseInt(document.getElementById("player-goals").value) || 0;
+const assists = parseInt(document.getElementById("player-assists").value) || 0;
+if(!name) return alert("Укажите имя игрока!");
+await fetch('/api/players', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({name, team, goals, assists}) });
+document.getElementById("player-name").value = ""; document.getElementById("player-goals").value = ""; document.getElementById("player-assists").value = ""; loadAllData();
+}
+async function deleteTeam(id) { if(confirm("Удалить клуб?")) { await fetch('/api/teams/' + id, {method: 'DELETE'}); loadAllData(); } }
+async function deletePlayer(id) { if(confirm("Удалить игрока?")) { await fetch('/api/players/' + id, {method: 'DELETE'}); loadAllData(); } }
+function promptAdmin() { if(prompt("Пароль доступа:") === ADMIN_PASS) { document.getElementById("view-public").classList.remove("active"); document.getElementById("view-admin").classList.add("active"); } }
+function exitAdmin() { document.getElementById("view-admin").classList.remove("active"); document.getElementById("view-public").classList.add("active"); }
+function switchTab(t) { document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active')); document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('bg-blue-600','text-white','font-semibold'); b.classList.add('text-zinc-400'); }); document.getElementById('tab-'+t).classList.add('active'); const a = document.getElementById('btn-'+t); a.classList.remove('text-zinc-400'); a.classList.add('bg-blue-600','text-white','font-semibold'); }
+
+
