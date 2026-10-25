@@ -6,8 +6,11 @@ function loadAllData() {
         fetch("/api/teams").then(function(r) { return r.json(); }),
         fetch("/api/matches").then(function(r) { return r.json(); }),
         fetch("/api/players").then(function(r) { return r.json(); })
-    ]).then(function(d) {
-        renderTables(d[0]); renderPublicMatches(d[1]); renderPlayers(d[2]); renderAdminControls(d[0], d[1], d[2]);
+    ]).then(function(data) {
+        var teams = data[0];
+        var matches = data[1];
+        var players = data[2];
+        renderTables(teams); renderPublicMatches(matches); renderPlayers(players); renderAdminControls(teams, matches, players);
     }).catch(function(e) { console.error(e); });
 }
 
@@ -22,14 +25,13 @@ function renderTables(teams) {
 
 function renderPublicMatches(matches) {
     var c = document.getElementById("public-matches-container"); if(!c) return; c.innerHTML = matches.length === 0 ? '<p class="text-zinc-500 text-xs">Расписание пусто.</p>' : "";
-    var tour = 0; var div = null;
     matches.forEach(function(m) {
-        if (m.tour !== tour) { tour = m.tour; div = document.createElement("div"); div.className = "space-y-3"; div.innerHTML = '<h3 class="text-xs font-bold uppercase text-zinc-500 border-b border-zinc-800 pb-1 font-mono">Тур ' + tour + '</h3><div class="grid gap-4 md:grid-cols-2"></div>'; c.appendChild(div); }
-        var grid = div.querySelector(".grid"); var played = m.home_score !== null;
-        var score = played ? '<span class="text-blue-500">' + m.home_score + '</span><span class="text-zinc-500">' + m.away_score + '</span>' : '<span class="text-xs text-zinc-600">VS</span>';
-        grid.innerHTML += '<div class="bg-zinc-900 border border-zinc-800 p-3 rounded-xl flex justify-between items-center text-xs font-bold"><div><p>' + m.home_team + ' - ' + m.away_team + '</p></div><div class="flex flex-col bg-zinc-950 px-2 py-1 rounded border border-zinc-800 font-mono text-center font-black min-w-[40px]">' + score + '</div></div>';
+        var score = '<span class="text-xs text-zinc-600">VS</span>';
+        if (m.home_score !== null) { score = '<span class="text-blue-500">' + m.home_score + '</span><span class="text-zinc-500">' + m.away_score + '</span>'; }
+        c.innerHTML += '<div class="bg-zinc-900 border border-zinc-800 p-3 rounded-xl flex justify-between items-center text-xs font-bold"><div><p class="text-zinc-400">Тур ' + m.tour + '</p><p>' + m.home_team + ' - ' + m.away_team + '</p></div><div class="flex flex-col bg-zinc-950 px-2 py-1 rounded border border-zinc-800 font-mono text-center font-black min-w-[40px]">' + score + '</div></div>';
     });
 }
+
 function renderPlayers(players) {
     var b = document.getElementById("public-players-list"); if(!b) return; b.innerHTML = players.length === 0 ? '<tr><td colspan="6" class="p-3 text-center text-zinc-500 text-xs">Пусто.</td></tr>' : "";
     players.forEach(function(p, i) { b.innerHTML += '<tr class="hover:bg-zinc-800/10"><td class="p-3 text-center font-mono text-zinc-500">' + (i + 1) + '</td><td class="p-3 font-bold">' + p.name + '</td><td class="p-3 text-zinc-400">' + p.team + '</td><td class="p-3 text-center font-mono">' + p.goals + '</td><td class="p-3 text-center font-mono">' + p.assists + '</td><td class="p-3 text-center font-black text-blue-400 font-mono">' + p.pts + '</td></tr>'; });
@@ -45,7 +47,7 @@ function renderAdminControls(teams, matches, players) {
 
 async function addTeam() {
     var n = document.getElementById("team-name").value.trim(); var l = document.getElementById("team-logo").value.trim(); if(!n) return alert("Имя!");
-    await fetch("/api/teams", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({name: name, logo: l}) });
+    await fetch("/api/teams", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({name: n, logo: l}) });
     document.getElementById("team-name").value = ""; document.getElementById("team-logo").value = ""; loadAllData();
 }
 
@@ -68,4 +70,3 @@ async function deletePlayer(id) { if(confirm("Удалить?")) { await fetch("
 function promptAdmin() { if(prompt("Пароль:") === ADMIN_PASS) { document.getElementById("view-public").classList.remove("active"); document.getElementById("view-admin").classList.add("active"); } }
 function exitAdmin() { document.getElementById("view-admin").classList.remove("active"); document.getElementById("view-public").classList.add("active"); }
 function switchTab(t) { document.querySelectorAll(".tab-content").forEach(function(c) { c.classList.remove("active"); }); document.querySelectorAll(".tab-btn").forEach(function(b) { b.classList.remove("bg-blue-600","text-white","font-semibold"); b.classList.add("text-zinc-400"); }); document.getElementById("tab-"+t).classList.add("active"); var a = document.getElementById("btn-"+t); a.classList.remove("text-zinc-400"); a.classList.add("bg-blue-600","text-white","font-semibold"); }
-
