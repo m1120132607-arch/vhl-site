@@ -1,10 +1,13 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+
+// Открываем доступ ко всем папкам — и к корню, и к public
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(__dirname));
 
@@ -31,10 +34,18 @@ db.serialize(() => {
     )`);
 });
 
+// Пуленепробиваемый поиск главного файла index.html
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'), (err) => {
-        if (err) res.sendFile(path.join(__dirname, 'index.html'));
-    });
+    const rootIndex = path.join(__dirname, 'index.html');
+    const publicIndex = path.join(__dirname, 'public', 'index.html');
+    
+    if (fs.existsSync(publicIndex)) {
+        res.sendFile(publicIndex);
+    } else if (fs.existsSync(rootIndex)) {
+        res.sendFile(rootIndex);
+    } else {
+        res.send("<h1>Сервер VHL запущен!</h1><p>Но файлы разметки не найдены. Убедитесь, что index.html загружен на GitHub.</p>");
+    }
 });
 
 app.get('/api/teams', (req, res) => {
