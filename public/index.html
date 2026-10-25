@@ -1,76 +1,50 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VHL | Официальный портал лиги</title>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VHL | Лига</title>
     <script src="https://tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cloudflare.com">
     <style>.tab-content, .view-section { display: none; } .active { display: block; }</style>
 </head>
 <body class="bg-zinc-950 text-zinc-100 font-sans">
     <div class="bg-zinc-900 border-b border-zinc-800 text-right px-4 py-1 text-xs">
-        <button onclick="promptAdmin()" class="text-zinc-400 hover:text-blue-400 font-mono"><i class="fa-solid fa-lock mr-1"></i> Панель управления лигой</button>
+        <button onclick="promptAdmin()" class="text-zinc-400 hover:text-blue-400 font-mono"><i class="fa-solid fa-lock mr-1"></i> Панель управления</button>
     </div>
     <div id="view-public" class="view-section active">
         <header class="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-50">
             <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <div class="bg-blue-600 text-white px-3 py-1.5 rounded font-black text-2xl tracking-tighter italic border border-blue-400">VHL</div>
-                    <div><p class="text-sm font-bold uppercase tracking-wide">Virtual Hockey League</p></div>
-                </div>
-                <nav class="flex bg-zinc-950 p-1 rounded-lg border border-zinc-800 text-xs">
-                    <button onclick="switchTab('table')" id="btn-table" class="tab-btn px-4 py-2 rounded-md bg-blue-600 text-white font-semibold">Турнирная таблица</button>
-                    <button onclick="switchTab('matches')" id="btn-matches" class="tab-btn px-4 py-2 rounded-md text-zinc-400">Календарь игр</button>
-                    <button onclick="switchTab('stats')" id="btn-stats" class="tab-btn px-4 py-2 rounded-md text-zinc-400">Бомбардиры</button>
+                <div class="flex items-center gap-3"><div class="bg-blue-600 text-white px-3 py-1 rounded font-black text-xl italic">VHL</div></div>
+                <nav class="flex bg-zinc-950 p-1 rounded border border-zinc-800 text-xs">
+                    <button onclick="switchTab('table')" id="btn-table" class="tab-btn px-3 py-1.5 rounded bg-blue-600 text-white font-semibold">Таблица</button>
+                    <button onclick="switchTab('matches')" id="btn-matches" class="tab-btn px-3 py-1.5 rounded text-zinc-400">Календарь</button>
+                    <button onclick="switchTab('stats')" id="btn-stats" class="tab-btn px-3 py-1.5 rounded text-zinc-400">Бомбардиры</button>
                 </nav>
             </div>
         </header>
-        <main class="max-w-7xl mx-auto px-4 py-8">
+        <main class="max-w-7xl mx-auto px-4 py-6">
             <section id="tab-table" class="tab-content active">
-                <h2 class="text-xl font-black uppercase text-blue-500 mb-4"><i class="fa-solid fa-trophy mr-2"></i>Регулярный Чемпионат VHL</h2>
-                <div class="bg-zinc-900 rounded-xl border border-zinc-800 overflow-x-auto">
-                    <table class="w-full text-left text-sm border-collapse">
-                        <thead><tr class="bg-zinc-800/50 text-zinc-400 text-xs border-b border-zinc-800 uppercase font-mono"><th class="p-3 text-center">№</th><th class="p-3">Клуб</th><th class="p-3 text-center">И</th><th class="p-3 text-center">В</th><th class="p-3 text-center">ВО</th><th class="p-3 text-center">ПО</th><th class="p-3 text-center">П</th><th class="p-3 text-center">Разн</th><th class="p-3 text-center text-blue-400 font-bold">Очки</th></tr></thead>
-                        <tbody id="table-main-body" class="divide-y divide-zinc-800/40"></tbody>
-                    </table>
-                </div>
+                <h2 class="text-lg font-bold uppercase text-blue-500 mb-3">Регулярный Чемпионат VHL</h2>
+                <div class="bg-zinc-900 rounded-xl border border-zinc-800 overflow-x-auto"><table class="w-full text-left text-sm"><thead><tr class="bg-zinc-800/50 text-zinc-400 text-xs border-b border-zinc-800 uppercase"><th class="p-3 text-center">№</th><th class="p-3">Клуб</th><th class="p-3 text-center">И</th><th class="p-3 text-center">В</th><th class="p-3 text-center">ВО</th><th class="p-3 text-center">ПО</th><th class="p-3 text-center">П</th><th class="p-3 text-center">Разн</th><th class="p-3 text-center text-blue-400 font-bold">Очки</th></tr></thead><tbody id="table-main-body" class="divide-y divide-zinc-800/40"></tbody></table></div>
             </section>
-            <section id="tab-matches" class="tab-content"><h1 class="text-2xl font-black uppercase mb-6"><i class="fa-solid fa-calendar text-blue-500 mr-2"></i>Расписание туров</h1><div id="public-matches-container" class="space-y-8"></div></section>
-            <section id="tab-stats" class="tab-content"><h1 class="text-2xl font-black uppercase mb-6"><i class="fa-solid fa-hockey-puck text-blue-500 mr-2"></i>Статистика игроков (Г+П)</h1><div class="bg-zinc-900 rounded-xl border border-zinc-800 overflow-x-auto"><table class="w-full text-left text-sm border-collapse"><thead><tr class="bg-zinc-800/50 text-zinc-400 text-xs border-b border-zinc-800 uppercase"><th class="p-4 text-center">Поз</th><th class="p-4">Игрок</th><th class="p-4">Команда</th><th class="p-4 text-center">Голы</th><th class="p-4 text-center">Пасы</th><th class="p-4 text-center font-bold text-blue-400">Очки</th></tr></thead><tbody id="public-players-list" class="divide-y divide-zinc-800/40"></tbody></table></div></section>
+            <section id="tab-matches" class="tab-content"><h1 class="text-xl font-bold uppercase mb-4">Расписание игр</h1><div id="public-matches-container" class="grid gap-4 md:grid-cols-2"></div></section>
+            <section id="tab-stats" class="tab-content"><h1 class="text-xl font-bold uppercase mb-4">Бомбардиры (Г+П)</h1><div class="bg-zinc-900 rounded-xl border border-zinc-800 overflow-x-auto"><table class="w-full text-left text-sm"><thead><tr class="bg-zinc-800/50 text-zinc-400 text-xs border-b border-zinc-800 uppercase"><th class="p-3 text-center">Поз</th><th class="p-3">Игрок</th><th class="p-3">Команда</th><th class="p-3 text-center">Г</th><th class="p-3 text-center">П</th><th class="p-3 text-center text-blue-400 font-bold">Очки</th></tr></thead><tbody id="public-players-list" class="divide-y divide-zinc-800/40"></tbody></table></div></section>
         </main>
     </div>
     <div id="view-admin" class="view-section">
-        <header class="bg-red-950/40 border-b border-red-900/40 px-4 py-4 flex justify-between items-center"><div class="flex items-center gap-2"><span class="bg-red-600 text-white font-bold text-xs px-2 py-0.5 rounded">ADMIN</span><h1 class="text-lg font-black uppercase">Панель VHL</h1></div><button onclick="exitAdmin()" class="bg-zinc-900 border border-zinc-700 px-3 py-1 text-xs rounded">Выйти</button></header>
-        <main class="max-w-7xl mx-auto px-4 py-8 grid gap-8 md:grid-cols-3">
-            <div class="space-y-6">
-                <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 shadow-xl"><h3 class="text-xs font-bold uppercase text-zinc-400 mb-3">Регистрация Клуба</h3><div class="space-y-2"><input id="team-name" type="text" placeholder="Название" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-white"><input id="team-logo" type="text" placeholder="URL логотипа" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-white"><button onclick="addTeam()" class="w-full bg-blue-600 font-bold p-2 rounded text-xs uppercase">Внести клуб</button></div></div>
-                <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 shadow-xl"><h3 class="text-xs font-bold uppercase text-zinc-400 mb-2">Генератор Календаря</h3><button onclick="generateSchedule()" class="w-full bg-amber-600 font-bold p-2 rounded text-xs uppercase">Создать сетку игр</button></div>
-                <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 shadow-xl"><h3 class="text-xs font-bold uppercase text-zinc-400 mb-3">Внести игрока</h3><div class="space-y-2"><input id="player-name" type="text" placeholder="Имя Фамилия" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-white"><select id="player-team" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-zinc-300"></select><div class="grid grid-cols-2 gap-2"><input id="player-goals" type="number" placeholder="Голы" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-center text-white"><input id="player-assists" type="number" placeholder="Пасы" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-center text-white"></div><button onclick="addPlayer()" class="w-full bg-purple-600 font-bold p-2 rounded text-xs uppercase">Добавить</button></div></div>
+        <header class="bg-red-950/40 border-b border-red-900/40 px-4 py-3 flex justify-between items-center"><h1 class="font-bold text-sm uppercase">Панель Управления</h1><button onclick="exitAdmin()" class="bg-zinc-900 border border-zinc-700 px-3 py-1 text-xs rounded">Выйти</button></header>
+        <main class="max-w-7xl mx-auto px-4 py-6 grid gap-6 md:grid-cols-3">
+            <div class="space-y-4">
+                <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800"><h3 class="text-xs font-bold text-zinc-400 mb-2">Создать Клуб</h3><input id="team-name" type="text" placeholder="Название" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs mb-2 text-white"><input id="team-logo" type="text" placeholder="URL логотипа" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs mb-2 text-white"><button onclick="addTeam()" class="w-full bg-blue-600 font-bold p-2 rounded text-xs uppercase">Добавить</button></div>
+                <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800"><h3 class="text-xs font-bold text-zinc-400 mb-2">Календарь</h3><button onclick="generateSchedule()" class="w-full bg-amber-600 font-bold p-2 rounded text-xs uppercase">Создать сетку игр</button></div>
+                <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800"><h3 class="text-xs font-bold text-zinc-400 mb-2">Внести Бомбардира</h3><input id="player-name" type="text" placeholder="Имя Фамилия" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs mb-2 text-white"><select id="player-team" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs mb-2 text-zinc-300"></select><div class="grid grid-cols-2 gap-2 mb-2"><input id="player-goals" type="number" placeholder="Г" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-center text-white"><input id="player-assists" type="number" placeholder="П" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-center text-white"></div><button onclick="addPlayer()" class="w-full bg-purple-600 font-bold p-2 rounded text-xs uppercase">Добавить</button></div>
             </div>
-            <div class="md:col-span-2 space-y-6">
-                <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 shadow-xl"><h3 class="text-sm font-bold uppercase text-zinc-300 mb-3">Результаты</h3><div class="space-y-3"><select id="admin-match-select" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-zinc-300"><option value="">Выберите матч</option></select><div class="grid grid-cols-2 gap-4"><input id="admin-score-home" type="number" placeholder="Хозяева" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-center text-white"><input id="admin-score-away" type="number" placeholder="Гости" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-center text-white"></div><select id="admin-match-status" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-zinc-400"><option value="FT">Основное время</option><option value="OT">Овертайм/Буллиты</option></select><button onclick="saveMatchScore()" class="w-full bg-green-600 font-bold p-2 rounded text-xs uppercase">Записать</button></div></div>
-                <div class="bg-zinc-900 p-5 rounded-xl border border-zinc-800 shadow-xl text-xs"><div class="grid md:grid-cols-2 gap-4"><div><p class="font-bold border-b border-zinc-800 pb-1 mb-2 text-zinc-500">Команды</p><ul id="admin-teams-list" class="space-y-1"></ul></div><div><p class="font-bold border-b border-zinc-800 pb-1 mb-2 text-zinc-500">Игроки</p><ul id="admin-players-list" class="space-y-1"></ul></div></div></div>
+            <div class="md:col-span-2 space-y-4">
+                <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800"><h3 class="text-xs font-bold text-zinc-300 mb-2">Результаты Матчей</h3><select id="admin-match-select" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs mb-2 text-zinc-300"></select><div class="grid grid-cols-2 gap-2 mb-2"><input id="admin-score-home" type="number" placeholder="Хозяева" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-center text-white"><input id="admin-score-away" type="number" placeholder="Гости" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs text-center text-white"></div><select id="admin-match-status" class="w-full bg-zinc-950 border border-zinc-800 p-2 rounded text-xs mb-2 text-zinc-400"><option value="FT">Основное время</option><option value="OT">Овертайм/Буллиты</option></select><button onclick="saveMatchScore()" class="w-full bg-green-600 font-bold p-2 rounded text-xs uppercase">Записать</button></div>
+                <div class="bg-zinc-900 p-4 rounded-xl border border-zinc-800 text-xs"><div class="grid grid-cols-2 gap-4"><div><p class="font-bold text-zinc-500 mb-1 border-b border-zinc-800">Клубы</p><ul id="admin-teams-list" class="space-y-1"></ul></div><div><p class="font-bold text-zinc-500 mb-1 border-b border-zinc-800">Игроки</p><ul id="admin-players-list" class="space-y-1"></ul></div></div></div>
             </div>
         </main>
     </div>
-    <script>
-        var ADMIN_PASS = "vhladmin2026";
-        document.addEventListener("DOMContentLoaded", function() { loadAllData(); setInterval(loadAllData, 15000); });
-        function loadAllData() {
-            Promise.all([
-                fetch("/api/teams").then(function(r) { return r.json(); }),
-                fetch("/api/matches").then(function(r) { return r.json(); }),
-                fetch("/api/players").then(function(r) { return r.json(); })
-            ]).then(function(data) {
-                renderTables(data[0]); renderPublicMatches(data[1]); renderPlayers(data[2]); renderAdminControls(data[0], data[1], data[2]);
-            });
-        }
-        function renderTables(teams) {
-            var body = document.getElementById("table-main-body"); if(!body) return; body.innerHTML = ""; var idx = 1;
-            teams.forEach(function(t) {
-                var img = t.logo ? '<img src="' + t.logo + '" class="w-5 h-5 rounded object-cover">' : '<i class="fa-solid fa-shield-halved text-zinc-600 text-sm"></i>';
-                body.innerHTML += '<tr class="hover:bg-zinc-800/10"><td class="p-3 text-center font-mono text-zinc-500">' + (idx++) + '</td><td class="p-3 font-bold flex items-center gap-2">' + img + ' <span>' + t.name + '</span></td><td class="p-3 text-center font-mono">' + (t.w + t.wo + t.lo + t.l) + '</td><td class="p-3 text-center text-zinc-400 font-mono">' + t.w + '</td><td class="p-3 text-center text-zinc-500 font-mono">' + t.wo + '</td><td class="p-3 text-center text-zinc-500 font-mono">' + t.lo + '</td><td class="p-3 text-center text-zinc-400 font-mono">' + t.l + '</td><td class="p-3 text-center text-zinc-400 font-mono">' + t.gs + ":" + t.ga + '</td><td class="p-3 text-center font-black font-mono text-base text-blue-400">' + t.pts + '</td></tr>';
-            });
-        }
-        function renderPublicMatches(matches) {
+    <script src="/public/script.js"></script>
+</body>
+</html>
