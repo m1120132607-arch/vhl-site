@@ -1,4 +1,4 @@
-const express = require('express');
+=const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const app = express();
@@ -14,19 +14,16 @@ const db = new sqlite3.Database(dbPath, (err) => {
     else console.log('База данных VHL успешно подключена!');
 });
 
-// Создание расширенных таблиц лиги
 db.serialize(() => {
-    // Таблица команд с поддержкой ссылки на логотип
+    // Единая таблица без поля conference
     db.run(`CREATE TABLE IF NOT EXISTS teams (
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         name TEXT UNIQUE, 
-        conference TEXT,
         logo TEXT DEFAULT '',
         w INTEGER DEFAULT 0, wo INTEGER DEFAULT 0, lo INTEGER DEFAULT 0, l INTEGER DEFAULT 0,
         gs INTEGER DEFAULT 0, ga INTEGER DEFAULT 0, pts INTEGER DEFAULT 0
     )`);
 
-    // Таблица матчей с указанием тура
     db.run(`CREATE TABLE IF NOT EXISTS matches (
         id INTEGER PRIMARY KEY AUTOINCREMENT, 
         tour INTEGER DEFAULT 1,
@@ -35,32 +32,26 @@ db.serialize(() => {
         status TEXT DEFAULT 'Ожидание', date TEXT DEFAULT ''
     )`);
 
-    // Таблица бомбардиров (Игроков)
     db.run(`CREATE TABLE IF NOT EXISTS players (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        team TEXT,
-        goals INTEGER DEFAULT 0,
-        assists INTEGER DEFAULT 0,
-        pts INTEGER DEFAULT 0
+        name TEXT, team TEXT, goals INTEGER DEFAULT 0, assists INTEGER DEFAULT 0, pts INTEGER DEFAULT 0
     )`);
 });
 
-// Главный роут
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'), (err) => {
         if (err) res.sendFile(path.join(__dirname, 'index.html'));
     });
 });
 
-// API: КОМАНДЫ
 app.get('/api/teams', (req, res) => {
+    // Сортировка по очкам, победам и разнице шайб для общей таблицы
     db.all("SELECT * FROM teams ORDER BY pts DESC, w DESC, (gs - ga) DESC", [], (err, rows) => res.json(rows || []));
 });
 
 app.post('/api/teams', (req, res) => {
-    const { name, conference, logo } = req.body;
-    db.run(`INSERT INTO teams (name, conference, logo) VALUES (?, ?, ?)`, [name, conference, logo || ''], function(err) {
+    const { name, logo } = req.body;
+    db.run(`INSERT INTO teams (name, logo) VALUES (?, ?)`, [name, logo || ''], function(err) {
         if (err) return res.status(400).json({ error: err.message });
         res.json({ id: this.lastID });
     });
@@ -70,18 +61,16 @@ app.delete('/api/teams/:id', (req, res) => {
     db.run(`DELETE FROM teams WHERE id = ?`, req.params.id, () => res.json({ success: true }));
 });
 
-// API: МАТЧИ И РЕЗУЛЬТАТЫ
 app.get('/api/matches', (req, res) => {
     db.all("SELECT * FROM matches ORDER BY tour ASC, id ASC", [], (err, rows) => res.json(rows || []));
 });
 
-// Внесение результата матча с обновлением таблиц
 app.post('/api/matches/score', (req, res) => {
     const { match_id, home_score, away_score, status } = req.body;
     const date = new Date().toLocaleDateString('ru-RU');
 
     db.get("SELECT * FROM matches WHERE id = ?", [match_id], (err, match) => {
-        if (!match || match.status === 'FT' || match.status === 'OT') return res.status(400).json({ error: "Матч уже сыгран или не найден" });
+        if (!match || match.status === 'FT' || match.status === 'OT') return res.status(400).json({ error: "Матч не найден" });
 
         db.serialize(() => {
             db.run(`UPDATE matches SET home_score=?, away_score=?, status=?, date=? WHERE id=?`, [home_score, away_score, status, date, match_id]);
@@ -105,37 +94,32 @@ app.post('/api/matches/score', (req, res) => {
     });
 });
 
-// Автогенерация календаря по круговой системе
 app.post('/api/matches/generate', (req, res) => {
     db.all("SELECT name FROM teams", [], (err, teams) => {
         if (!teams || teams.length < 2) return res.status(400).json({ error: "Недостаточно команд" });
-        
         let list = teams.map(t => t.name);
-        if (list.length % 2 !== 0) list.push("ОТДЫХ"); // Балансировка нечетного количества
+        if (list.length % 2 !== 0) list.push("ОТДЫХ");
 
         const numTeams = list.length;
         const rounds = numTeams - 1;
         const half = numTeams / 2;
 
         db.serialize(() => {
-            db.run("DELETE FROM matches WHERE status='Ожидание'"); // Чистим несыгранные
-
+            db.run("DELETE FROM matches WHERE status='Ожидание'");
             for (let round = 0; round < rounds; round++) {
                 for (let i = 0; i < half; i++) {
-                    const home = list[i];
-                    const away = list[numTeams - 1 - i];
+                    const home = list[i]; const away = list[numTeams - 1 - i];
                     if (home !== "ОТДЫХ" && away !== "ОТДЫХ") {
                         db.run(`INSERT INTO matches (tour, home_team, away_team, status) VALUES (?, ?, ?, 'Ожидание')`, [round + 1, home, away]);
                     }
                 }
-                list.splice(1, 0, list.pop()); // Сдвиг круга
+                list.splice(1, 0, list.pop());
             }
         });
         res.json({ success: true });
     });
 });
 
-// API: БОМБАРДИРЫ
 app.get('/api/players', (req, res) => {
     db.all("SELECT * FROM players ORDER BY pts DESC, goals DESC", [], (err, rows) => res.json(rows || []));
 });
@@ -143,9 +127,7 @@ app.get('/api/players', (req, res) => {
 app.post('/api/players', (req, res) => {
     const { name, team, goals, assists } = req.body;
     const pts = parseInt(goals) + parseInt(assists);
-    db.run(`INSERT INTO players (name, team, goals, assists, pts) VALUES (?, ?, ?, ?, ?)`, [name, team, goals, assists, pts], function(err) {
-        res.json({ success: true });
-    });
+    db.run(`INSERT INTO players (name, team, goals, assists, pts) VALUES (?, ?, ?, ?, ?)`, [name, team, goals, assists, pts], () => res.json({ success: true }));
 });
 
 app.delete('/api/players/:id', (req, res) => {
